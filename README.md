@@ -2,6 +2,9 @@
 
 A Python CLI for interacting with Moodle LMS instances via the Web Services REST API.
 
+Copyright (C) 2026 Marc Alier, Juanan Pereira — [LAMB Project](https://github.com/Lamb-Project)
+Licensed under the [GNU General Public License v3.0](LICENSE).
+
 ## Installation
 
 ```bash
@@ -76,3 +79,9 @@ uv run pytest
 uv run ruff check src/
 uv run mypy src/
 ```
+
+## License
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+See [LICENSE](LICENSE) for the full text.

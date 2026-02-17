@@ -88,7 +88,13 @@ def handle_errors(fn: Any) -> Any:
 @click.version_option(version=__version__, prog_name="moodle-cli")
 @click.pass_context
 def cli(ctx: click.Context, profile: str | None, json_output: bool, verbose: bool) -> None:
-    """moodle-cli — interact with Moodle from the terminal."""
+    """moodle-cli — interact with Moodle from the terminal.
+
+    Copyright (C) 2026 Marc Alier, Juanan Pereira — LAMB Project
+
+    Licensed under the GNU General Public License v3.0 (GPL-3.0-or-later).
+    See https://github.com/Lamb-Project/moodle-cli for source code.
+    """
     ctx.ensure_object(dict)
     ctx.obj = MoodleContext(profile=profile, json_output=json_output, verbose=verbose)
 

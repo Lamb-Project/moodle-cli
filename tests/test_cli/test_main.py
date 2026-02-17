@@ -12,6 +12,9 @@ def test_help() -> None:
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert "moodle-cli" in result.output
+    assert "Marc Alier" in result.output
+    assert "Juanan Pereira" in result.output
+    assert "GPL-3.0" in result.output
     assert "auth" in result.output
     assert "course" in result.output
     assert "site" in result.output

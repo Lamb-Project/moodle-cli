@@ -33,6 +33,24 @@ moodle course search "math"
 moodle call core_webservice_get_site_info
 ```
 
+## Authentication with SSO/CAS
+
+Many university Moodle instances use Single Sign-On (SSO/CAS/SAML) for authentication. The `auth login` command uses Moodle's `/login/token.php` endpoint, which requires direct Moodle credentials and **does not work with SSO**.
+
+If your institution uses SSO, you can obtain a token manually:
+
+1. Log in to your Moodle instance normally through your browser (via SSO).
+2. Navigate to your **Security keys** page: `https://your-moodle-site.com/user/managetoken.php`
+3. Copy an existing token for the **Moodle mobile web service**, or ask your Moodle admin to generate one.
+
+Once you have a token, you can log in with:
+
+```bash
+moodle auth login --url https://your-moodle-site.com --username youruser --token YOUR_TOKEN
+```
+
+> **Note**: The `--token` flag bypasses the username/password authentication flow and stores the provided token directly.
+
 ## Commands
 
 | Group        | Commands                                      |

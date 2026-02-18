@@ -18,7 +18,8 @@ def auth() -> None:
 @auth.command()
 @click.option("--url", required=True, prompt=True, help="Moodle site URL (e.g. https://moodle.example.com)")
 @click.option("--username", required=True, prompt=True, help="Moodle username")
-@click.option("--password", prompt=True, hide_input=True, help="Moodle password")
+@click.option("--password", default=None, help="Moodle password")
+@click.option("--token", default=None, help="Pre-existing token (for SSO/CAS sites)")
 @click.option("--profile-name", "--name", default="default", help="Profile name to save as")
 @click.option("--service", default="moodle_mobile_app", help="Web service name")
 @pass_context
@@ -27,15 +28,25 @@ def login(
     ctx: MoodleContext,
     url: str,
     username: str,
-    password: str,
+    password: str | None,
+    token: str | None,
     profile_name: str,
     service: str,
 ) -> None:
-    """Login to a Moodle instance and save credentials."""
-    url = url.rstrip("/")
-    console.print(f"Authenticating to [bold]{url}[/bold]...")
+    """Login to a Moodle instance and save credentials.
 
-    token = MoodleHTTPClient.authenticate(url, username, password, service)
+    For SSO/CAS sites, use --token to provide a pre-existing token
+    instead of username/password authentication.
+    """
+    url = url.rstrip("/")
+
+    if token:
+        console.print(f"Storing token for [bold]{url}[/bold]...")
+    else:
+        if not password:
+            password = click.prompt("Password", hide_input=True)
+        console.print(f"Authenticating to [bold]{url}[/bold]...")
+        token = MoodleHTTPClient.authenticate(url, username, password, service)
 
     profile = Profile(url=url, username=username, service=service)
     ctx.config.set_profile(profile_name, profile)

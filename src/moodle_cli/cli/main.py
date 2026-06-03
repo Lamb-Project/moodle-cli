@@ -24,10 +24,12 @@ class MoodleContext:
         profile: str | None = None,
         json_output: bool = False,
         verbose: bool = False,
+        readonly: bool = False,
     ) -> None:
         self.profile_name = profile
         self.json_output = json_output
         self.verbose = verbose
+        self.readonly = readonly
         self._config_mgr = ConfigManager()
         self._token_store = TokenStore()
         self._client: MoodleHTTPClient | None = None
@@ -52,7 +54,10 @@ class MoodleContext:
             )
             sys.exit(1)
         self._client = MoodleHTTPClient(
-            base_url=profile.url, token=token, service=profile.service
+            base_url=profile.url,
+            token=token,
+            service=profile.service,
+            readonly=self.readonly,
         )
         return self._client
 

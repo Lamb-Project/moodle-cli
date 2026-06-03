@@ -72,6 +72,29 @@ moodle auth login --url https://your-moodle-site.com --username youruser --token
 | `role`      | assign, unassign                              |
 | `call`      | (generic escape hatch)                        |
 
+For the read-only subset of these commands, see [Read-only mode](#read-only-mode-moodle-readonly) below.
+
+## Read-only mode (`moodle-readonly`)
+
+Installing this package gives you a second command, `moodle-readonly`. It does what the name says: it reads from a Moodle site and nothing else. No grading, no enrolment change, no message send, no delete — those commands are not there to run.
+
+It exists for one reason: **handing Moodle access to an AI agent.** An agent that drafts feedback, summarises submissions, or checks who has turned work in needs to read a course. It does not need to change one. The ordinary `moodle` binary does both, so letting an agent run it means trusting it never to call a write — by mistake, or because someone fed it a bad instruction. `moodle-readonly` removes the question: you can give an agent (or any script) free rein over it, because the commands that would do damage do not exist in it to be called. In a permissioned setup, allow `moodle-readonly` outright and keep the full `moodle` behind manual approval.
+
+The guarantee has two parts, and both live in this client — we assume nothing about how the Moodle server is configured.
+
+1. **The write commands are absent.** `moodle-readonly` registers only the read commands. `assign grade`, the `create` / `update` / `delete` of every group, `role assign`, `message send`, and the generic `call` escape hatch are gone — they fail with *no such command* and never appear in `--help`.
+2. **The web-service layer refuses writes.** Beneath the commands, the HTTP client holds an allowlist of read-only web-service functions and refuses to call anything outside it. A command that reads as `list` but is wired to a write function would still be stopped here. This is the part that holds even if the command surface ever drifts.
+
+What it does **not** do: it does not make the data harmless. A read-only tool still reads student names, submissions, and grades, and whatever you point it at can pass that on. Read-only governs what gets written back to Moodle, not what gets seen — treat the output with the same care as any other access to student records.
+
+Use it exactly like `moodle`; it shares the same profiles and tokens, so once you have run `moodle auth login`, both commands work:
+
+```bash
+moodle-readonly course list
+moodle-readonly assign submissions 635436
+moodle-readonly grade report --course-id 104052
+```
+
 ## Global Options
 
 - `--profile / -p` — Profile name to use (default: "default")

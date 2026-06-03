@@ -20,6 +20,7 @@ dependencies = [
 
 [project.scripts]
 moodle = "moodle_cli.cli.main:cli"
+moodle-readonly = "moodle_cli.cli.readonly:cli_readonly"
 
 [build-system]
 requires = ["hatchling"]

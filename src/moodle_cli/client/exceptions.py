@@ -48,6 +48,14 @@ class ConnectionError(MoodleError):
     """Failed to connect to the Moodle instance."""
 
 
+class ReadOnlyViolation(MoodleError):
+    """A write operation was attempted through a read-only client.
+
+    Raised by MoodleHTTPClient.call when running in read-only mode and the
+    requested wsfunction is not in client.readonly.READ_ALLOWLIST.
+    """
+
+
 class ConfigError(MoodleError):
     """Configuration file error."""
 

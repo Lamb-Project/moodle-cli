@@ -10,7 +10,9 @@ from moodle_cli.client.exceptions import (
     AuthenticationError,
     ConnectionError,
     MoodleAPIError,
+    ReadOnlyViolation,
 )
+from moodle_cli.client.readonly import READ_ALLOWLIST
 
 
 def flatten_params(params: dict[str, Any], prefix: str = "") -> dict[str, str]:
@@ -46,10 +48,12 @@ class MoodleHTTPClient:
         token: str,
         service: str = "moodle_mobile_app",
         timeout: float = 30.0,
+        readonly: bool = False,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.token = token
         self.service = service
+        self.readonly = readonly
         self._client = httpx.Client(timeout=timeout)
 
     @property
@@ -61,7 +65,14 @@ class MoodleHTTPClient:
 
         Returns the parsed JSON response (dict or list).
         Raises MoodleAPIError on Moodle-level errors.
+        Raises ReadOnlyViolation if readonly and wsfunction is not read-allowlisted.
         """
+        if self.readonly and wsfunction not in READ_ALLOWLIST:
+            raise ReadOnlyViolation(
+                f"Read-only mode: web-service function '{wsfunction}' is not in the read "
+                f"allowlist. moodle-readonly refuses any operation that could mutate the site."
+            )
+
         flat = flatten_params(params)
         flat["wstoken"] = self.token
         flat["wsfunction"] = wsfunction

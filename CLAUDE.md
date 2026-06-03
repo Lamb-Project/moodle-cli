@@ -46,3 +46,23 @@ uv run mypy src/             # Type check
 2. Create `src/moodle_cli/cli/newcomponent.py` with Click group
 3. Register in `src/moodle_cli/cli/main.py` `_register_commands()`
 4. Add tests in `tests/test_services/` and `tests/test_cli/`
+
+## Read-only mode — `moodle-readonly` (security boundary)
+
+`moodle-readonly` is a capability-restricted twin entry point: read-only by
+construction, intended for AI agents / automation. Two enforcement layers:
+
+- `src/moodle_cli/client/readonly.py` — `READ_ALLOWLIST`, the set of read-only
+  `wsfunction`s. **This frozenset is the enforced boundary** (checked in
+  `MoodleHTTPClient.call`). Derived by tracing each command to the actual WS
+  function it POSTs — never trust the command name.
+- `src/moodle_cli/cli/readonly.py` — `READONLY_COMMANDS`, the (group → subcommand)
+  filter for the CLI surface, plus the `cli_readonly` entry point.
+
+**When you add a READ command** that should be available to agents: add its
+`wsfunction` to `READ_ALLOWLIST` *and* its `(group, subcommand)` to
+`READONLY_COMMANDS`. Adding to the allowlist is a security decision — review it.
+**Never add a `*_view_*` function** (it logs/triggers completion server-side — a
+write). Write commands need no change; they are excluded by default. Tests in
+`tests/test_cli/test_readonly.py` enforce the manifest's integrity and that no
+write verb sits in the allowlist.

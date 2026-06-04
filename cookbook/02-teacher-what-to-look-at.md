@@ -65,11 +65,12 @@ moodle-readonly -p default --json assign submissions <assignment_id> \
 ## 3. Deadlines coming up
 
 ```bash
-moodle-readonly -p default calendar upcoming --limit 10
+moodle-readonly -p default calendar upcoming --limit 10        # across ALL your courses
+moodle-readonly -p default calendar course "$C"                # just THIS course
 ```
 
-This spans all your courses, soonest first — assignment due-dates, quiz closes,
-scheduled events.
+`upcoming` spans every course soonest-first; `calendar course` narrows to the one you're
+triaging — assignment due-dates, quiz closes, scheduled events.
 
 ## 4. Who has gone quiet
 
@@ -86,7 +87,16 @@ moodle-readonly -p default --json enrol list-users "$C" \
   | jq -r '.[] | select((.roles[].shortname=="student") and ((.lastcourseaccess // 0)==0)) | .fullname'
 ```
 
-## 5. Survey / choice pulse (optional)
+## 5. Notes you (or a co-teacher) left on students
+
+```bash
+moodle-readonly -p default note course "$C"
+```
+
+Surfaces the teacher notes recorded against users in the course — easy to lose track of in
+the UI.
+
+## 6. Survey / choice pulse (optional)
 
 If you run feedback surveys or choices:
 

@@ -22,7 +22,8 @@ class Conversation(BaseModel):
     name: str | None = None
     type: int = 1
     membercount: int = 0
-    unreadcount: int = 0
+    # Moodle returns null (not 0) for a conversation with nothing unread.
+    unreadcount: int | None = None
 
 
 class MessageService(BaseService):

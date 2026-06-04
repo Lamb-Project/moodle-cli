@@ -26,6 +26,13 @@ Task-oriented recipes for **moodle-cli** — both binaries:
 | 05 | [Forums in depth](05-forums.md) | *Read a whole thread; find threads waiting on a reply.* |
 | 06 | [Grades & assignments](06-grades-and-assignments.md) | *Grade overview, per-course tables, submission + grading status.* |
 | 07 | [Finding things](07-finding-things.md) | *Find a course id by name, look up a user, list categories.* |
+| 12 | [Reading activity contents](12-activity-contents.md) | *Read inside workshops, glossaries, databases, wikis, lessons.* |
+
+> Lower-traffic read commands not given their own recipe: `auth status` / `auth profiles`
+> (which profile/token is active), `calendar events` (raw event list — `upcoming` is friendlier),
+> `course list` (site-wide; usually permission-gated — prefer `enrol my-courses`),
+> `message list` (recent messages), `file list <contextid>`. Run `moodle-readonly <group>
+> --help` for any group's full command set.
 
 ### Write (`moodle` — gated; writes as you)
 

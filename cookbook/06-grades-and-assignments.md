@@ -61,6 +61,9 @@ comm -23 \
 moodle-readonly -p default quiz list <course_id>
 moodle-readonly -p default quiz attempts <quiz_id> --user-id <student_id>
 moodle-readonly -p default quiz best-grade <quiz_id> --user-id <student_id>
+
+# Drill into one finished attempt — its questions, marks, and feedback:
+moodle-readonly -p default quiz review <attempt_id>          # attempt_id from `quiz attempts`
 ```
 
 ## Note on writes

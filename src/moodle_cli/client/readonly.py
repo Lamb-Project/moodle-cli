@@ -28,6 +28,7 @@ READ_ALLOWLIST: frozenset[str] = frozenset(
         "core_course_get_contents",
         "core_course_get_categories",
         "core_course_get_course_module",
+        "core_course_get_enrolled_courses_by_timeline_classification",
         # users
         "core_user_get_users",
         "core_user_get_users_by_field",
@@ -57,9 +58,13 @@ READ_ALLOWLIST: frozenset[str] = frozenset(
         "mod_quiz_get_quizzes_by_courses",
         "mod_quiz_get_user_attempts",
         "mod_quiz_get_user_best_grade",
+        "mod_quiz_get_attempt_review",
+        # notes (teacher notes on users)
+        "core_notes_get_course_notes",
         # calendar
         "core_calendar_get_calendar_events",
         "core_calendar_get_action_events_by_timesort",
+        "core_calendar_get_action_events_by_course",
         # completion (status read only)
         "core_completion_get_activities_completion_status",
         "core_completion_get_course_completion_status",
@@ -100,6 +105,16 @@ READ_ALLOWLIST: frozenset[str] = frozenset(
         "mod_lesson_get_lessons_by_courses",
         "mod_workshop_get_workshops_by_courses",
         "mod_imscp_get_imscps_by_courses",
+        # activity-content readers — read INSIDE an activity (not just list it).
+        # All pure reads; mod_wiki_get_page_contents is the read view (NOT
+        # mod_wiki_get_page_for_editing, which locks the page — see denylist).
+        "mod_workshop_get_submissions",
+        "mod_workshop_get_grades_report",
+        "mod_glossary_get_entries_by_letter",
+        "mod_data_get_entries",
+        "mod_wiki_get_subwiki_pages",
+        "mod_wiki_get_page_contents",
+        "mod_lesson_get_pages",
     }
 )
 

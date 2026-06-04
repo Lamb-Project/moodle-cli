@@ -57,20 +57,26 @@ moodle auth login --url https://your-moodle-site.com --username youruser --token
 |-------------|-----------------------------------------------|
 | `auth`      | login, logout, status, profiles               |
 | `site`      | info, functions                                |
-| `course`    | list, get, search, contents, categories, module, create, update, delete |
+| `course`    | list, get, search, contents, categories, module, timeline, create, update, delete |
 | `user`      | me, list, get, profiles, create, update, delete |
 | `enrol`     | my-courses, list-users, methods               |
 | `grade`     | get, report, overview, table                  |
 | `assign`    | list, submissions, grades, status, grade      |
 | `forum`     | list, discussions, posts, post                |
-| `quiz`      | list, attempts, best-grade                     |
-| `calendar`  | events, upcoming, create                      |
+| `quiz`      | list, attempts, best-grade, review            |
+| `calendar`  | events, upcoming, course, create              |
 | `message`   | send, list, conversations, unread             |
 | `completion` | status, course, update                       |
 | `group`     | list, groupings, user-groups                  |
 | `feedback`  | list, analysis, non-respondents               |
 | `choice`    | list, results                                 |
 | `content`   | types, list (activities by module type)       |
+| `note`      | course                                        |
+| `workshop`  | submissions, grades                           |
+| `glossary`  | entries                                       |
+| `database`  | entries                                       |
+| `wiki`      | pages, page                                   |
+| `lesson`    | pages                                         |
 | `badge`     | user                                          |
 | `file`      | upload, list                                  |
 | `cohort`    | list, create, delete, add-members, remove-members |

@@ -106,6 +106,13 @@ def cli(ctx: click.Context, profile: str | None, json_output: bool, verbose: boo
 
 # Import and register command groups (deferred to avoid circular imports)
 def _register_commands() -> None:
+    from moodle_cli.cli.activity_content import (
+        database,
+        glossary,
+        lesson,
+        wiki,
+        workshop,
+    )
     from moodle_cli.cli.assign import assign
     from moodle_cli.cli.auth import auth
     from moodle_cli.cli.badge import badge
@@ -123,6 +130,7 @@ def _register_commands() -> None:
     from moodle_cli.cli.grade import grade
     from moodle_cli.cli.group import group
     from moodle_cli.cli.message import message
+    from moodle_cli.cli.note import note
     from moodle_cli.cli.quiz import quiz
     from moodle_cli.cli.role import role
     from moodle_cli.cli.site import site
@@ -149,6 +157,12 @@ def _register_commands() -> None:
     cli.add_command(choice)
     cli.add_command(content)
     cli.add_command(badge)
+    cli.add_command(note)
+    cli.add_command(workshop)
+    cli.add_command(glossary)
+    cli.add_command(database)
+    cli.add_command(wiki)
+    cli.add_command(lesson)
 
 
 _register_commands()

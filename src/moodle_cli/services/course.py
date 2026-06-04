@@ -52,6 +52,15 @@ class CourseService(BaseService):
         cm: dict[str, Any] = data.get("cm", data)
         return cm
 
+    def get_timeline(self, classification: str = "all") -> list[Course]:
+        """Enrolled courses by timeline status — inprogress / past / future / all
+        (core_course_get_enrolled_courses_by_timeline_classification)."""
+        data = self.call(
+            "core_course_get_enrolled_courses_by_timeline_classification",
+            classification=classification,
+        )
+        return [Course(**c) for c in data.get("courses", [])]
+
     def get_course(self, course_id: int) -> Course:
         data = self.call("core_course_get_courses", options={"ids": [course_id]})
         return Course(**data[0])

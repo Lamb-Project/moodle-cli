@@ -122,6 +122,10 @@ class TestReadonlyCliSurface:
             ("forum", "posts"), ("enrol", "methods"), ("grade", "overview"),
             ("calendar", "upcoming"), ("group", "list"), ("feedback", "analysis"),
             ("content", "list"), ("badge", "user"), ("completion", "course"),
+            # ws-coverage-gap additions
+            ("calendar", "course"), ("course", "timeline"), ("note", "course"),
+            ("quiz", "review"), ("workshop", "grades"), ("glossary", "entries"),
+            ("wiki", "page"), ("lesson", "pages"), ("database", "entries"),
         ]:
             group = cli_readonly.commands.get(gname)
             assert group is not None and sub in group.commands  # type: ignore[attr-defined]

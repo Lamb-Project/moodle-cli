@@ -48,6 +48,25 @@ class AssignService(BaseService):
                 submissions.append(Submission(**s))
         return submissions
 
+    def get_grades(self, assignment_ids: list[int]) -> list[dict[str, Any]]:
+        """Grades already given on assignments (mod_assign_get_grades)."""
+        data = self.call("mod_assign_get_grades", assignmentids=assignment_ids)
+        grades: list[dict[str, Any]] = []
+        for a in data.get("assignments", []):
+            for g in a.get("grades", []):
+                grades.append({"assignment": a.get("assignmentid"), **g})
+        return grades
+
+    def get_submission_status(
+        self, assign_id: int, user_id: int | None = None
+    ) -> dict[str, Any]:
+        """Per-user submission + grading status (mod_assign_get_submission_status)."""
+        params: dict[str, Any] = {"assignid": assign_id}
+        if user_id is not None:
+            params["userid"] = user_id
+        status: dict[str, Any] = self.call("mod_assign_get_submission_status", **params)
+        return status
+
     def grade_submission(
         self,
         assignment_id: int,

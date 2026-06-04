@@ -42,20 +42,25 @@ from moodle_cli.cli.main import MoodleContext
 # service layer. `call` and `role` are absent by design (escape hatch / write-only).
 # This is the ergonomic layer; client.readonly.READ_ALLOWLIST is the enforced boundary.
 READONLY_COMMANDS: dict[str, set[str]] = {
-    "assign": {"list", "submissions"},
+    "assign": {"list", "submissions", "grades", "status"},
     "auth": {"status", "profiles"},  # local config/keyring reads only
-    "calendar": {"events"},
+    "badge": {"user"},
+    "calendar": {"events", "upcoming"},
+    "choice": {"list", "results"},
     "cohort": {"list"},
-    "completion": {"status"},
-    "course": {"list", "get", "search", "contents"},
-    "enrol": {"my-courses", "list-users"},
+    "completion": {"status", "course"},
+    "content": {"types", "list"},
+    "course": {"list", "get", "search", "contents", "categories", "module"},
+    "enrol": {"my-courses", "list-users", "methods"},
+    "feedback": {"list", "analysis", "non-respondents"},
     "file": {"list"},
-    "forum": {"list", "discussions"},
-    "grade": {"get", "report"},
-    "message": {"list", "conversations"},
-    "quiz": {"list", "attempts"},
+    "forum": {"list", "discussions", "posts"},
+    "grade": {"get", "report", "overview", "table"},
+    "group": {"list", "groupings", "user-groups"},
+    "message": {"list", "conversations", "unread"},
+    "quiz": {"list", "attempts", "best-grade"},
     "site": {"info", "functions"},
-    "user": {"me", "list", "get"},
+    "user": {"me", "list", "get", "profiles"},
 }
 
 
@@ -63,22 +68,28 @@ def _full_groups() -> dict[str, click.Group]:
     """Import the full command groups — the same objects the ``moodle`` CLI registers."""
     from moodle_cli.cli.assign import assign
     from moodle_cli.cli.auth import auth
+    from moodle_cli.cli.badge import badge
     from moodle_cli.cli.calendar import calendar
+    from moodle_cli.cli.choice import choice
     from moodle_cli.cli.cohort import cohort
     from moodle_cli.cli.completion import completion
+    from moodle_cli.cli.content import content
     from moodle_cli.cli.course import course
     from moodle_cli.cli.enrol import enrol
+    from moodle_cli.cli.feedback import feedback
     from moodle_cli.cli.file import file
     from moodle_cli.cli.forum import forum
     from moodle_cli.cli.grade import grade
+    from moodle_cli.cli.group import group
     from moodle_cli.cli.message import message
     from moodle_cli.cli.quiz import quiz
     from moodle_cli.cli.site import site
     from moodle_cli.cli.user import user
 
     groups = (
-        assign, auth, calendar, cohort, completion, course, enrol,
-        file, forum, grade, message, quiz, site, user,
+        assign, auth, badge, calendar, choice, cohort, completion, content,
+        course, enrol, feedback, file, forum, grade, group, message, quiz,
+        site, user,
     )
     result: dict[str, click.Group] = {}
     for g in groups:

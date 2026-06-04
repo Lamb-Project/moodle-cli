@@ -16,6 +16,32 @@ def completion() -> None:
 
 @completion.command()
 @click.argument("course_id", type=int)
+@click.option("--user-id", type=int, required=True, help="User ID to report on.")
+@pass_context
+@handle_errors
+def course(ctx: MoodleContext, course_id: int, user_id: int) -> None:
+    """Overall course-completion status for a user (completed? criteria met?)."""
+    svc = CompletionService(ctx.get_client())
+    data = svc.get_course_status(course_id, user_id)
+    if ctx.json_output:
+        render_json(data)
+    else:
+        console.print(f"Completed: {data.get('completed', '-')}")
+        rows = [
+            {
+                "Criteria": c.get("details", {}).get("criteria", ""),
+                "Requirement": c.get("details", {}).get("requirement", ""),
+                "Status": c.get("details", {}).get("status", ""),
+                "Complete": c.get("complete", ""),
+            }
+            for c in data.get("completions", [])
+        ]
+        if rows:
+            render_table(rows, title="Completion criteria")
+
+
+@completion.command()
+@click.argument("course_id", type=int)
 @click.option("--user-id", type=int, default=None, help="User ID (defaults to current user)")
 @pass_context
 @handle_errors

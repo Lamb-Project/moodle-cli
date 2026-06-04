@@ -15,6 +15,25 @@ def user() -> None:
 
 
 @user.command()
+@click.argument("course_id", type=int)
+@click.argument("user_ids", type=int, nargs=-1, required=True)
+@pass_context
+@handle_errors
+def profiles(ctx: MoodleContext, course_id: int, user_ids: tuple[int, ...]) -> None:
+    """Per-course profiles for one or more users (role context for a course)."""
+    svc = UserService(ctx.get_client())
+    users = svc.course_profiles(course_id, list(user_ids))
+    if ctx.json_output:
+        render_json([u.model_dump() for u in users])
+    else:
+        rows = [
+            {"ID": u.id, "Full Name": u.fullname, "Email": u.email, "Dept": u.department}
+            for u in users
+        ]
+        render_table(rows, title=f"Profiles ({len(rows)})")
+
+
+@user.command()
 @pass_context
 @handle_errors
 def me(ctx: MoodleContext) -> None:

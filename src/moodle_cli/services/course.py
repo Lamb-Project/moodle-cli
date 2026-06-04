@@ -28,10 +28,29 @@ class CourseContent(BaseModel):
     modules: list[dict[str, Any]] = []
 
 
+class Category(BaseModel):
+    id: int
+    name: str = ""
+    parent: int = 0
+    coursecount: int = 0
+    depth: int = 0
+    visible: int = 1
+
+
 class CourseService(BaseService):
     def list_courses(self) -> list[Course]:
         data = self.call("core_course_get_courses")
         return [Course(**c) for c in data]
+
+    def get_categories(self) -> list[Category]:
+        data = self.call("core_course_get_categories")
+        return [Category(**c) for c in data]
+
+    def get_module(self, cmid: int) -> dict[str, Any]:
+        """Course-module metadata by course-module id (core_course_get_course_module)."""
+        data = self.call("core_course_get_course_module", cmid=cmid)
+        cm: dict[str, Any] = data.get("cm", data)
+        return cm
 
     def get_course(self, course_id: int) -> Course:
         data = self.call("core_course_get_courses", options={"ids": [course_id]})

@@ -5,13 +5,31 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, fmt_ts, render_json, render_table
 from moodle_cli.services.calendar import CalendarService
 
 
 @click.group()
 def calendar() -> None:
     """Calendar management."""
+
+
+@calendar.command()
+@click.option("--limit", type=int, default=20, help="Max events to show.")
+@pass_context
+@handle_errors
+def upcoming(ctx: MoodleContext, limit: int) -> None:
+    """Upcoming deadlines + events across your courses, soonest first."""
+    svc = CalendarService(ctx.get_client())
+    evts = svc.get_upcoming(limit)
+    if ctx.json_output:
+        render_json([e.model_dump() for e in evts])
+    else:
+        rows = [
+            {"When": fmt_ts(e.timestart), "Course": e.courseid or "-", "Event": e.name}
+            for e in evts
+        ]
+        render_table(rows, title=f"Upcoming ({len(rows)})")
 
 
 @calendar.command()

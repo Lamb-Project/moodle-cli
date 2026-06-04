@@ -57,16 +57,21 @@ moodle auth login --url https://your-moodle-site.com --username youruser --token
 |-------------|-----------------------------------------------|
 | `auth`      | login, logout, status, profiles               |
 | `site`      | info, functions                                |
-| `course`    | list, get, search, contents, create, update, delete |
-| `user`      | me, list, get, create, update, delete         |
-| `enrol`     | my-courses, list-users                        |
-| `grade`     | get, report                                   |
-| `assign`    | list, submissions, grade                      |
-| `forum`     | list, discussions, post                       |
-| `quiz`      | list, attempts                                |
-| `calendar`  | events, create                                |
-| `message`   | send, list, conversations                     |
-| `completion` | status, update                               |
+| `course`    | list, get, search, contents, categories, module, create, update, delete |
+| `user`      | me, list, get, profiles, create, update, delete |
+| `enrol`     | my-courses, list-users, methods               |
+| `grade`     | get, report, overview, table                  |
+| `assign`    | list, submissions, grades, status, grade      |
+| `forum`     | list, discussions, posts, post                |
+| `quiz`      | list, attempts, best-grade                     |
+| `calendar`  | events, upcoming, create                      |
+| `message`   | send, list, conversations, unread             |
+| `completion` | status, course, update                       |
+| `group`     | list, groupings, user-groups                  |
+| `feedback`  | list, analysis, non-respondents               |
+| `choice`    | list, results                                 |
+| `content`   | types, list (activities by module type)       |
+| `badge`     | user                                          |
 | `file`      | upload, list                                  |
 | `cohort`    | list, create, delete, add-members, remove-members |
 | `role`      | assign, unassign                              |
@@ -92,8 +97,24 @@ Use it exactly like `moodle`; it shares the same profiles and tokens, so once yo
 ```bash
 moodle-readonly course list
 moodle-readonly assign submissions 635436
-moodle-readonly grade report --course-id 104052
+moodle-readonly grade report 104052
 ```
+
+### Cookbook
+
+Task-oriented recipes for the read-only surface live in [`cookbook/`](cookbook/) —
+*"which courses am I in and as what role"*, *"as a teacher, what should I look at"*
+(unanswered forum threads, ungraded work, who's gone quiet), *"as a student, what's
+due"*, and *"how active is course X"* (enrolment, engagement, forum traffic, content
+inventory). Start at [`cookbook/README.md`](cookbook/README.md).
+
+The read-only surface is built for these workflows: enrolment carries **per-user last
+access** (engagement), forum discussions carry **reply counts + last poster** (so you
+can spot threads awaiting a reply), and `forum posts` reads a whole thread. The set of
+web-service functions the read client may call is reviewed in
+[`src/moodle_cli/client/readonly.py`](src/moodle_cli/client/readonly.py), which also
+carries a **denylist** of read-*shaped* functions deliberately refused (token/key
+issuers, the wiki edit-lock, draft-area allocators, `*_view_*` completion-triggers).
 
 ## Global Options
 

@@ -65,3 +65,12 @@ class MessageService(BaseService):
             convid=conversation_id,
         )
         return data.get("messages", [])
+
+    def unread_count(self, user_id: int) -> int:
+        """Number of conversations with unread messages."""
+        data = self.call(
+            "core_message_get_unread_conversations_count", useridto=user_id
+        )
+        if isinstance(data, dict):
+            return int(data.get("count", 0))
+        return int(data)

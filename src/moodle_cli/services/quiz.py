@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel
 
 from moodle_cli.services.base import BaseService
@@ -47,3 +49,11 @@ class QuizService(BaseService):
             params["userid"] = user_id
         result: dict[str, object] = self.call("mod_quiz_get_user_best_grade", **params)
         return result
+
+    def attempt_review(self, attempt_id: int) -> dict[str, Any]:
+        """Full review of a finished attempt — questions, responses, marks, feedback
+        (mod_quiz_get_attempt_review)."""
+        review: dict[str, Any] = self.call(
+            "mod_quiz_get_attempt_review", attemptid=attempt_id
+        )
+        return review

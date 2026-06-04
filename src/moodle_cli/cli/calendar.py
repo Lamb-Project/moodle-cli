@@ -33,6 +33,21 @@ def upcoming(ctx: MoodleContext, limit: int) -> None:
 
 
 @calendar.command()
+@click.argument("course_id", type=int)
+@pass_context
+@handle_errors
+def course(ctx: MoodleContext, course_id: int) -> None:
+    """Upcoming deadlines + events for ONE course."""
+    svc = CalendarService(ctx.get_client())
+    evts = svc.get_course_events(course_id)
+    if ctx.json_output:
+        render_json([e.model_dump() for e in evts])
+    else:
+        rows = [{"When": fmt_ts(e.timestart), "Event": e.name, "Type": e.eventtype} for e in evts]
+        render_table(rows, title=f"Course events ({len(rows)})")
+
+
+@calendar.command()
 @click.option("--course-id", type=int, multiple=True, help="Filter by course ID(s)")
 @pass_context
 @handle_errors

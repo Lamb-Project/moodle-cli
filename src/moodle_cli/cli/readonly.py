@@ -45,27 +45,40 @@ READONLY_COMMANDS: dict[str, set[str]] = {
     "assign": {"list", "submissions", "grades", "status"},
     "auth": {"status", "profiles"},  # local config/keyring reads only
     "badge": {"user"},
-    "calendar": {"events", "upcoming"},
+    "calendar": {"events", "upcoming", "course"},
     "choice": {"list", "results"},
     "cohort": {"list"},
     "completion": {"status", "course"},
     "content": {"types", "list"},
-    "course": {"list", "get", "search", "contents", "categories", "module"},
+    "course": {"list", "get", "search", "contents", "categories", "module", "timeline"},
+    "database": {"entries"},
     "enrol": {"my-courses", "list-users", "methods"},
     "feedback": {"list", "analysis", "non-respondents"},
     "file": {"list"},
     "forum": {"list", "discussions", "posts"},
+    "glossary": {"entries"},
     "grade": {"get", "report", "overview", "table"},
     "group": {"list", "groupings", "user-groups"},
+    "lesson": {"pages"},
     "message": {"list", "conversations", "unread"},
-    "quiz": {"list", "attempts", "best-grade"},
+    "note": {"course"},
+    "quiz": {"list", "attempts", "best-grade", "review"},
     "site": {"info", "functions"},
     "user": {"me", "list", "get", "profiles"},
+    "wiki": {"pages", "page"},
+    "workshop": {"submissions", "grades"},
 }
 
 
 def _full_groups() -> dict[str, click.Group]:
     """Import the full command groups — the same objects the ``moodle`` CLI registers."""
+    from moodle_cli.cli.activity_content import (
+        database,
+        glossary,
+        lesson,
+        wiki,
+        workshop,
+    )
     from moodle_cli.cli.assign import assign
     from moodle_cli.cli.auth import auth
     from moodle_cli.cli.badge import badge
@@ -82,14 +95,15 @@ def _full_groups() -> dict[str, click.Group]:
     from moodle_cli.cli.grade import grade
     from moodle_cli.cli.group import group
     from moodle_cli.cli.message import message
+    from moodle_cli.cli.note import note
     from moodle_cli.cli.quiz import quiz
     from moodle_cli.cli.site import site
     from moodle_cli.cli.user import user
 
     groups = (
         assign, auth, badge, calendar, choice, cohort, completion, content,
-        course, enrol, feedback, file, forum, grade, group, message, quiz,
-        site, user,
+        course, database, enrol, feedback, file, forum, glossary, grade,
+        group, lesson, message, note, quiz, site, user, wiki, workshop,
     )
     result: dict[str, click.Group] = {}
     for g in groups:

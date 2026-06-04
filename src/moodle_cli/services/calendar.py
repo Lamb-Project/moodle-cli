@@ -41,6 +41,12 @@ class CalendarService(BaseService):
         data = self.call("core_calendar_get_action_events_by_timesort", limitnum=limit)
         return [CalendarEvent(**e) for e in data.get("events", [])]
 
+    def get_course_events(self, course_id: int) -> list[CalendarEvent]:
+        """Action events (deadlines etc.) for a single course
+        (core_calendar_get_action_events_by_course)."""
+        data = self.call("core_calendar_get_action_events_by_course", courseid=course_id)
+        return [CalendarEvent(**e) for e in data.get("events", [])]
+
     def create_event(
         self,
         name: str,

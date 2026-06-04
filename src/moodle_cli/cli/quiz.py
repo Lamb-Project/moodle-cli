@@ -48,6 +48,29 @@ def list_quizzes(ctx: MoodleContext, course_id: int) -> None:
 
 
 @quiz.command()
+@click.argument("attempt_id", type=int)
+@pass_context
+@handle_errors
+def review(ctx: MoodleContext, attempt_id: int) -> None:
+    """Full review of a finished attempt — questions, marks, feedback."""
+    data = QuizService(ctx.get_client()).attempt_review(attempt_id)
+    if ctx.json_output:
+        render_json(data)
+    else:
+        import re as _re
+
+        grade = data.get("grade", "-")
+        console.print(f"Grade: [bold]{grade}[/bold]")
+        for q in data.get("questions", []):
+            status = q.get("status", "")
+            mark = q.get("mark", "")
+            slot = q.get("slot", "")
+            html = _re.sub(r"<[^>]+>", " ", q.get("html", "") or "")
+            html = _re.sub(r"\s+", " ", html).strip()[:100]
+            console.print(f"  Q{slot} [{status}] mark={mark}: {html}")
+
+
+@quiz.command()
 @click.argument("quiz_id", type=int)
 @click.option("--user-id", type=int, default=None, help="Filter by user ID")
 @pass_context

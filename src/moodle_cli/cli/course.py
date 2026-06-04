@@ -32,6 +32,26 @@ def categories(ctx: MoodleContext) -> None:
 
 
 @course.command()
+@click.option(
+    "--classification",
+    type=click.Choice(["all", "inprogress", "past", "future", "favourites"]),
+    default="all",
+    help="Which slice of your enrolled courses.",
+)
+@pass_context
+@handle_errors
+def timeline(ctx: MoodleContext, classification: str) -> None:
+    """Your enrolled courses by timeline status (in-progress / past / future)."""
+    svc = CourseService(ctx.get_client())
+    courses = svc.get_timeline(classification)
+    if ctx.json_output:
+        render_json([c.model_dump() for c in courses])
+    else:
+        rows = [{"ID": c.id, "Short Name": c.shortname, "Full Name": c.fullname} for c in courses]
+        render_table(rows, title=f"Courses · {classification} ({len(rows)})")
+
+
+@course.command()
 @click.argument("cmid", type=int)
 @pass_context
 @handle_errors

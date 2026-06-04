@@ -108,11 +108,17 @@ moodle-readonly grade report 104052
 
 ### Cookbook
 
-Task-oriented recipes for the read-only surface live in [`cookbook/`](cookbook/) —
-*"which courses am I in and as what role"*, *"as a teacher, what should I look at"*
-(unanswered forum threads, ungraded work, who's gone quiet), *"as a student, what's
-due"*, and *"how active is course X"* (enrolment, engagement, forum traffic, content
-inventory). Start at [`cookbook/README.md`](cookbook/README.md).
+Task-oriented recipes live in [`cookbook/`](cookbook/), split into **read**
+(`moodle-readonly`, agent-safe) and **write** (`moodle`, gated) tiers:
+
+- **Read (01–07):** *"which courses am I in and as what role"*, *"as a teacher, what should
+  I look at"* (unanswered forum threads, ungraded work, who's gone quiet), *"as a student,
+  what's due"*, *"how active is course X"* (enrolment, engagement, forum traffic, content).
+- **Write (08–11):** the safety model (writes happen *as you*), then teacher
+  (grade, post, message, completion, calendar), student (post, message, own calendar), and
+  admin (course/user CRUD, enrol via `call`, cohorts, roles) workflows.
+
+Start at [`cookbook/README.md`](cookbook/README.md).
 
 The read-only surface is built for these workflows: enrolment carries **per-user last
 access** (engagement), forum discussions carry **reply counts + last poster** (so you

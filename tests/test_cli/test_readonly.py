@@ -43,6 +43,23 @@ class TestReadAllowlist:
         assert isinstance(READ_ALLOWLIST, frozenset)
         assert len(READ_ALLOWLIST) >= 20
 
+    def test_reviewed_denylist_is_disjoint_from_allowlist(self) -> None:
+        # The dangerous read-SHAPED functions (token/key issuers, draft allocators,
+        # the wiki edit-lock) must never leak into the allowlist. The allowlist's
+        # "_get_ means read" test cannot catch these, so guard them explicitly.
+        from moodle_cli.client.readonly import READ_DENYLIST_REVIEWED
+
+        leaked = READ_ALLOWLIST & READ_DENYLIST_REVIEWED
+        assert leaked == frozenset(), f"reviewed-unsafe functions in allowlist: {leaked}"
+
+    def test_content_map_matches_allowlist(self) -> None:
+        # Every wsfunction the content dispatcher can call must be allowlisted,
+        # or moodle-readonly would refuse it at the chokepoint.
+        from moodle_cli.services.content import CONTENT_FUNCTIONS
+
+        for _type, (fn, _key) in CONTENT_FUNCTIONS.items():
+            assert fn in READ_ALLOWLIST, f"content function not allowlisted: {fn}"
+
 
 class TestManifestIntegrity:
     """The command manifest must name only commands that actually exist (no drift)."""
@@ -101,6 +118,10 @@ class TestReadonlyCliSurface:
         for gname, sub in [
             ("course", "list"), ("assign", "submissions"),
             ("grade", "report"), ("site", "info"), ("user", "me"),
+            # comprehensive additions
+            ("forum", "posts"), ("enrol", "methods"), ("grade", "overview"),
+            ("calendar", "upcoming"), ("group", "list"), ("feedback", "analysis"),
+            ("content", "list"), ("badge", "user"), ("completion", "course"),
         ]:
             group = cli_readonly.commands.get(gname)
             assert group is not None and sub in group.commands  # type: ignore[attr-defined]

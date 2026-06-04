@@ -16,6 +16,20 @@ def message() -> None:
 
 
 @message.command()
+@pass_context
+@handle_errors
+def unread(ctx: MoodleContext) -> None:
+    """Number of conversations with unread messages."""
+    client = ctx.get_client()
+    me = UserService(client).get_me()
+    count = MessageService(client).unread_count(me.id)
+    if ctx.json_output:
+        render_json({"unread_conversations": count})
+    else:
+        console.print(f"Unread conversations: [bold]{count}[/bold]")
+
+
+@message.command()
 @click.argument("user_id", type=int)
 @click.argument("text")
 @pass_context

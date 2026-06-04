@@ -32,6 +32,15 @@ class CalendarService(BaseService):
         )
         return [CalendarEvent(**e) for e in data.get("events", [])]
 
+    def get_upcoming(self, limit: int = 20) -> list[CalendarEvent]:
+        """Upcoming action events sorted by time (core_calendar_get_action_events_by_timesort).
+
+        The "what's coming up" view — assignment due-dates, quiz closes and scheduled
+        events across all the user's courses, soonest first.
+        """
+        data = self.call("core_calendar_get_action_events_by_timesort", limitnum=limit)
+        return [CalendarEvent(**e) for e in data.get("events", [])]
+
     def create_event(
         self,
         name: str,

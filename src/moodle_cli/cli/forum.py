@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
+import re
+
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, fmt_ts, render_json, render_table
 from moodle_cli.services.forum import ForumService
+
+
+def _plain(html: str, limit: int = 100) -> str:
+    text = re.sub(r"<[^>]+>", " ", html or "")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[:limit]
 
 
 @click.group()
@@ -34,14 +42,50 @@ def list_forums(ctx: MoodleContext, course_id: int) -> None:
 @pass_context
 @handle_errors
 def discussions(ctx: MoodleContext, forum_id: int) -> None:
-    """List discussions in a forum."""
+    """List discussions in a forum (with reply count + who posted last)."""
     svc = ForumService(ctx.get_client())
     discs = svc.get_discussions(forum_id)
     if ctx.json_output:
         render_json([d.model_dump() for d in discs])
     else:
-        rows = [{"ID": d.id, "Subject": d.subject or d.name, "Author": d.userfullname} for d in discs]
+        # Moodle returns `id` = first-post id and `discussion` = discussion id.
+        # `forum posts` needs the *discussion* id, so surface that as the chainable ID.
+        rows = [
+            {
+                "Disc ID": d.discussion or d.id,
+                "Subject": d.subject or d.name,
+                "Started by": d.userfullname,
+                "Replies": d.numreplies,
+                "Last post": fmt_ts(d.timemodified),
+                "Last by": d.usermodifiedfullname or "-",
+            }
+            for d in discs
+        ]
         render_table(rows, title=f"Discussions ({len(rows)})")
+
+
+@forum.command()
+@click.argument("discussion_id", type=int)
+@pass_context
+@handle_errors
+def posts(ctx: MoodleContext, discussion_id: int) -> None:
+    """List every post in a discussion (author + time, oldest first)."""
+    svc = ForumService(ctx.get_client())
+    items = svc.get_posts(discussion_id)
+    if ctx.json_output:
+        render_json([p.model_dump() for p in items])
+    else:
+        rows = [
+            {
+                "ID": p.id,
+                "When": fmt_ts(p.timecreated),
+                "Author": p.author_name,
+                "Subject": p.subject,
+                "Message": _plain(p.message, 80),
+            }
+            for p in items
+        ]
+        render_table(rows, title=f"Posts ({len(rows)})")
 
 
 @forum.command()

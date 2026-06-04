@@ -14,6 +14,39 @@ def course() -> None:
     """Course management."""
 
 
+@course.command()
+@pass_context
+@handle_errors
+def categories(ctx: MoodleContext) -> None:
+    """List course categories."""
+    svc = CourseService(ctx.get_client())
+    cats = svc.get_categories()
+    if ctx.json_output:
+        render_json([c.model_dump() for c in cats])
+    else:
+        rows = [
+            {"ID": c.id, "Name": c.name, "Parent": c.parent, "Courses": c.coursecount}
+            for c in cats
+        ]
+        render_table(rows, title=f"Categories ({len(rows)})")
+
+
+@course.command()
+@click.argument("cmid", type=int)
+@pass_context
+@handle_errors
+def module(ctx: MoodleContext, cmid: int) -> None:
+    """Show metadata for a single course module (by course-module id)."""
+    svc = CourseService(ctx.get_client())
+    cm = svc.get_module(cmid)
+    if ctx.json_output:
+        render_json(cm)
+    else:
+        for key in ("id", "name", "modname", "instance", "course", "section", "visible", "url"):
+            if key in cm:
+                console.print(f"{key:10} {cm[key]}")
+
+
 @course.command("list")
 @pass_context
 @handle_errors

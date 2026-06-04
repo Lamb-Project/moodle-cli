@@ -108,15 +108,20 @@ def cli(ctx: click.Context, profile: str | None, json_output: bool, verbose: boo
 def _register_commands() -> None:
     from moodle_cli.cli.assign import assign
     from moodle_cli.cli.auth import auth
+    from moodle_cli.cli.badge import badge
     from moodle_cli.cli.calendar import calendar
     from moodle_cli.cli.call import call
+    from moodle_cli.cli.choice import choice
     from moodle_cli.cli.cohort import cohort
     from moodle_cli.cli.completion import completion
+    from moodle_cli.cli.content import content
     from moodle_cli.cli.course import course
     from moodle_cli.cli.enrol import enrol
+    from moodle_cli.cli.feedback import feedback
     from moodle_cli.cli.file import file
     from moodle_cli.cli.forum import forum
     from moodle_cli.cli.grade import grade
+    from moodle_cli.cli.group import group
     from moodle_cli.cli.message import message
     from moodle_cli.cli.quiz import quiz
     from moodle_cli.cli.role import role
@@ -139,6 +144,11 @@ def _register_commands() -> None:
     cli.add_command(cohort)
     cli.add_command(role)
     cli.add_command(call)
+    cli.add_command(group)
+    cli.add_command(feedback)
+    cli.add_command(choice)
+    cli.add_command(content)
+    cli.add_command(badge)
 
 
 _register_commands()

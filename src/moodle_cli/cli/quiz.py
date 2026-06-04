@@ -5,13 +5,31 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import render_json, render_table
+from moodle_cli.output import console, render_json, render_table
 from moodle_cli.services.quiz import QuizService
 
 
 @click.group()
 def quiz() -> None:
     """Quiz management."""
+
+
+@quiz.command("best-grade")
+@click.argument("quiz_id", type=int)
+@click.option("--user-id", type=int, default=None, help="User ID (defaults to current user)")
+@pass_context
+@handle_errors
+def best_grade(ctx: MoodleContext, quiz_id: int, user_id: int | None) -> None:
+    """Show a user's best grade on a quiz."""
+    svc = QuizService(ctx.get_client())
+    data = svc.best_grade(quiz_id, user_id)
+    if ctx.json_output:
+        render_json(data)
+    else:
+        if data.get("hasgrade"):
+            console.print(f"Best grade: {data.get('grade')}")
+        else:
+            console.print("No grade yet.")
 
 
 @quiz.command("list")

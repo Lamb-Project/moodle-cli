@@ -39,3 +39,11 @@ class QuizService(BaseService):
             params["userid"] = user_id
         data = self.call("mod_quiz_get_user_attempts", **params)
         return [QuizAttempt(**a) for a in data.get("attempts", [])]
+
+    def best_grade(self, quiz_id: int, user_id: int | None = None) -> dict[str, object]:
+        """A user's best grade on a quiz (mod_quiz_get_user_best_grade)."""
+        params: dict[str, object] = {"quizid": quiz_id}
+        if user_id is not None:
+            params["userid"] = user_id
+        result: dict[str, object] = self.call("mod_quiz_get_user_best_grade", **params)
+        return result

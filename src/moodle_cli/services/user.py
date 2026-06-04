@@ -47,6 +47,14 @@ class UserService(BaseService):
         )
         return User(**data[0])
 
+    def course_profiles(self, course_id: int, user_ids: list[int]) -> list[User]:
+        """Per-course user profiles (core_user_get_course_user_profiles)."""
+        data = self.call(
+            "core_user_get_course_user_profiles",
+            userlist=[{"userid": uid, "courseid": course_id} for uid in user_ids],
+        )
+        return [User(**u) for u in data]
+
     def create_user(
         self,
         username: str,

@@ -22,6 +22,18 @@ moodle-readonly -p default enrol my-courses
 The **Last access** column is your own recency in each course — handy for spotting
 courses you've drifted away from.
 
+### Just the active ones (or past / future)
+
+`my-courses` lists everything. To slice by where a course is in its lifecycle:
+
+```bash
+moodle-readonly -p default course timeline --classification inprogress
+moodle-readonly -p default course timeline --classification past
+moodle-readonly -p default course timeline --classification future
+```
+
+Good for "what am I actually teaching/taking *this* term" without the archive noise.
+
 ## What role do I play in a course?
 
 `my-courses` doesn't carry your role directly. To get it, look yourself up in the

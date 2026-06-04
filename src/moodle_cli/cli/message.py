@@ -71,7 +71,7 @@ def conversations(ctx: MoodleContext) -> None:
         render_json([c.model_dump() for c in convs])
     else:
         rows = [
-            {"ID": c.id, "Name": c.name or "(unnamed)", "Members": c.membercount, "Unread": c.unreadcount}
+            {"ID": c.id, "Name": c.name or "(unnamed)", "Members": c.membercount, "Unread": c.unreadcount or 0}
             for c in convs
         ]
         render_table(rows, title=f"Conversations ({len(rows)})")

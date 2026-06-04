@@ -47,6 +47,7 @@ moodle-readonly -p default --json enrol list-users <course_id> \
 moodle-readonly -p default forum list <course_id>
 moodle-readonly -p default group list <course_id>
 moodle-readonly -p default group groupings <course_id>
+moodle-readonly -p default group user-groups <course_id> <user_id>   # which group is this student in?
 moodle-readonly -p default content types                   # module types you can list
 moodle-readonly -p default content list <type> <course_id> # e.g. content list quiz 106264
 moodle-readonly -p default enrol methods <course_id>       # how people get into the course

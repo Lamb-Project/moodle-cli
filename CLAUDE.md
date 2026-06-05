@@ -40,6 +40,20 @@ uv run mypy src/             # Type check
 - Token is never stored in config TOML — only in OS keyring
 - `call` command is the escape hatch for any WS function
 
+## Pre-auth flows (token-less calls)
+
+Most calls go through `MoodleHTTPClient.call()`, which requires a token. Two
+flows happen *before* a token exists and so live outside that method:
+
+- `MoodleHTTPClient.authenticate()` — `/login/token.php` (username/password).
+- `client/qrlogin.py` — QR login. `exchange_qr_login()` POSTs to
+  `/lib/ajax/service-nologin.php` (`tool_mobile_get_tokens_for_qr_login`) to turn
+  a one-time `qrlogin` passport into a token. Two non-obvious requirements:
+  it must send a **`MoodleMobile` User-Agent** (else `apprequired`), and the
+  passport is **single-use, ~3-min TTL** (else `invalidkey`). Surfaced as
+  `moodle auth qr-login`. **Not** exposed in `moodle-readonly` (auth there is
+  `status`/`profiles` only — same as `login`).
+
 ## Adding a New Command Group
 
 1. Create `src/moodle_cli/services/newcomponent.py` extending `BaseService`

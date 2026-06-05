@@ -51,11 +51,51 @@ moodle auth login --url https://your-moodle-site.com --username youruser --token
 
 > **Note**: The `--token` flag bypasses the username/password authentication flow and stores the provided token directly.
 
+## QR login (sites that show a QR code instead of a token)
+
+Newer Moodle (4.x) sites often show a **QR code** on the mobile-app / security-keys page instead of a copyable token string. That QR is **not** a token — it encodes a one-time *autologin passport*:
+
+```
+moodlemobile://https://your-moodle-site.com?qrlogin=<key>&userid=<id>
+```
+
+`moodle auth qr-login` exchanges a **fresh** passport for the real web-service token (via Moodle's `tool_mobile_get_tokens_for_qr_login`) and stores it. This is the **SSO/CAS-friendly** path: it needs no password and no admin, so it works where `auth login --username/--password` cannot.
+
+```bash
+# Easiest: point it at a screenshot of the QR (needs the optional `qr` extra, see below)
+moodle auth qr-login --image ~/Downloads/qr.png --name mysite
+
+# Or pass the decoded URI yourself (no extra dependency needed) — quote it, it contains &
+moodle auth qr-login "moodlemobile://https://your-moodle-site.com?qrlogin=KEY&userid=42" --name mysite
+
+# Or the parts, separately
+moodle auth qr-login --url https://your-moodle-site.com --key KEY --userid 42 --name mysite
+```
+
+The username is auto-detected from the token; override it with `--username` if needed. Once stored, the profile works with both `moodle` and `moodle-readonly` (shared keyring).
+
+> **Two constraints on the passport.** It is **single-use** and has a **~3-minute TTL** — refresh the QR page right before running the command. A stale key returns `invalidkey`.
+
+**Optional `qr` extra (for `--image`).** Image decoding needs `pyzbar` + `pillow`:
+
+```bash
+pip install 'moodle-cli[qr]'
+```
+
+`pyzbar` needs the native **zbar** library. On macOS the *system* Python cannot load Homebrew's `libzbar` (SIP strips `DYLD_*`); use a venv/uv Python and point it at the lib:
+
+```bash
+brew install zbar
+DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib moodle auth qr-login --image ~/Downloads/qr.png --name mysite
+```
+
+If you'd rather not install anything, decode the QR yourself (any QR reader) and use the `moodlemobile://` URI form above — that path is dependency-free.
+
 ## Commands
 
 | Group        | Commands                                      |
 |-------------|-----------------------------------------------|
-| `auth`      | login, logout, status, profiles               |
+| `auth`      | login, qr-login, logout, status, profiles     |
 | `site`      | info, functions                                |
 | `course`    | list, get, search, contents, categories, module, timeline, create, update, delete |
 | `user`      | me, list, get, profiles, create, update, delete |

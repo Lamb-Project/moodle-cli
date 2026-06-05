@@ -18,6 +18,16 @@ dependencies = [
     "tomli-w>=1.0",
 ]
 
+[project.optional-dependencies]
+# QR-image decoding for `moodle auth qr-login --image`. Not required if you pass
+# the decoded moodlemobile:// URI yourself. On macOS the system Python may fail
+# to load Homebrew's libzbar (SIP) — use a venv/uv Python with
+# DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib. See README "QR login".
+qr = [
+    "pyzbar>=0.1.9",
+    "pillow>=10.0",
+]
+
 [project.scripts]
 moodle = "moodle_cli.cli.main:cli"
 moodle-readonly = "moodle_cli.cli.readonly:cli_readonly"

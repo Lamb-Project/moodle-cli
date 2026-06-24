@@ -73,7 +73,15 @@ class AssignService(BaseService):
         user_id: int,
         grade: float,
         feedback: str = "",
+        workflow_state: str = "",
     ) -> None:
+        # `workflowstate` MUST stay empty unless the assignment has marking
+        # workflow enabled (markingworkflow=1). Sending a non-empty state such as
+        # "graded" to an assignment with marking workflow OFF makes Moodle reject
+        # the whole call with "Invalid parameter value detected" — so the grade
+        # never lands. Default to "" (valid for both workflow-on and workflow-off);
+        # callers grading a workflow-enabled assignment can pass an explicit state
+        # (e.g. "released") via the CLI's --workflow-state.
         self.call(
             "mod_assign_save_grade",
             assignmentid=assignment_id,
@@ -81,6 +89,11 @@ class AssignService(BaseService):
             grade=grade,
             attemptnumber=-1,
             addattempt=0,
-            workflowstate="graded",
+            workflowstate=workflow_state,
+            # `applytoall` is required by mod_assign_save_grade — omitting it is
+            # rejected as "Invalid parameter value detected". 0 = grade only this
+            # user (correct for a per-user grade; on a team-submission assignment 1
+            # would blanket the whole team, which this command must not do).
+            applytoall=0,
             plugindata={"assignfeedbackcomments_editor": {"text": feedback, "format": 1}},
         )

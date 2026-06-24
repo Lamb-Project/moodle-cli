@@ -88,10 +88,26 @@ def submissions(ctx: MoodleContext, assignment_ids: tuple[int, ...]) -> None:
 @click.option("--user-id", required=True, type=int)
 @click.option("--grade", "grade_value", required=True, type=float)
 @click.option("--feedback", default="", help="Feedback comment")
+@click.option(
+    "--workflow-state",
+    default="",
+    help=(
+        "Marking-workflow state (e.g. 'released'). Leave empty unless the "
+        "assignment has marking workflow enabled — a non-empty value on a "
+        "non-workflow assignment is rejected by Moodle."
+    ),
+)
 @pass_context
 @handle_errors
-def grade(ctx: MoodleContext, assignment_id: int, user_id: int, grade_value: float, feedback: str) -> None:
+def grade(
+    ctx: MoodleContext,
+    assignment_id: int,
+    user_id: int,
+    grade_value: float,
+    feedback: str,
+    workflow_state: str,
+) -> None:
     """Grade a submission."""
     svc = AssignService(ctx.get_client())
-    svc.grade_submission(assignment_id, user_id, grade_value, feedback)
+    svc.grade_submission(assignment_id, user_id, grade_value, feedback, workflow_state)
     console.print(f"[green]Graded user {user_id} on assignment {assignment_id}: {grade_value}[/green]")

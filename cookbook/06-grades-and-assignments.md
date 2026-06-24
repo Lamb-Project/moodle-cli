@@ -70,7 +70,13 @@ moodle-readonly -p default quiz review <attempt_id>          # attempt_id from `
 
 There is intentionally **no** way to set a grade here — `assign grade`, `grade set`,
 etc. do not exist in `moodle-readonly`. Grading is a write; do it in the Moodle UI or
-the gated `moodle` binary.
+the gated `moodle` binary (recipe [09](09-teacher-write.md)).
+
+> **Marking-workflow caveat.** `moodle assign grade` works on assignments with marking
+> workflow **off** (`markingworkflow=0`, the default). If an assignment has marking
+> workflow **on** and you want the grade released to the student, pass
+> `--workflow-state released`. Leave it empty otherwise — a non-empty workflow state on a
+> non-workflow assignment is rejected by Moodle.
 
 ## See also
 - [02 · Teacher triage](02-teacher-what-to-look-at.md).

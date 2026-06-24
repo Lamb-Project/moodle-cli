@@ -22,6 +22,13 @@ Submissions carry `userid`, not a name, so you can grade `userid + repo` without
 the student's identity (blind grading). Resolve a name only if you need to via
 `moodle-readonly enrol list-users <course>`.
 
+> **Marking-workflow caveat.** By default `assign grade` saves with an empty workflow
+> state, which is correct for assignments with marking workflow **off** (`markingworkflow=0`,
+> the common case). If the assignment has marking workflow **on** and you want the grade
+> released to the student, add `--workflow-state released`. Do **not** pass a non-empty
+> state on a non-workflow assignment — Moodle rejects the whole call with
+> `Invalid parameter value detected`.
+
 > **Batch grading pattern** (propose → review → apply): generate a `userid,grade,feedback`
 > table from your rubric, eyeball it, then loop:
 > ```bash

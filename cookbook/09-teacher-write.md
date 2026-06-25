@@ -48,10 +48,19 @@ moodle -p default forum post \
   --message "<p>Hola a tothom, la sessió síncrona de demà passa a les 11:00.</p>"
 ```
 
-`--message` takes HTML. `forum post` starts a **new discussion**; replying within an
-existing thread isn't exposed as a dedicated command — post a new discussion, or reply in
-the browser. (For drafting the prose, hand it to a writing assistant; for *posting*, this
-is the command.)
+`--message` takes HTML. `forum post` starts a **new discussion**. To reply **within** an
+existing thread, use `forum reply` with the parent post's id (from `forum posts <discussion_id>`):
+
+```bash
+moodle-readonly -p default forum posts 1445            # → find the post id to reply to
+moodle -p default forum reply \
+  --post-id 2661 \
+  --message "<p>Reply text. Subject defaults to 'Re:' if omitted.</p>"
+```
+
+`forum reply` is a write, so it lives only in the full `moodle` binary, never in
+`moodle-readonly`. (For drafting the prose, hand it to a writing assistant; for *posting*,
+this is the command.)
 
 ## Message a student directly
 

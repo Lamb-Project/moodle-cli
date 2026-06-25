@@ -99,3 +99,21 @@ def post(ctx: MoodleContext, forum_id: int, subject: str, message: str) -> None:
     svc = ForumService(ctx.get_client())
     disc_id = svc.add_discussion(forum_id, subject, message)
     console.print(f"[green]Created discussion {disc_id} in forum {forum_id}[/green]")
+
+
+@forum.command()
+@click.option(
+    "--post-id",
+    required=True,
+    type=int,
+    help="The post to reply to — get its id from `forum posts <discussion_id>`.",
+)
+@click.option("--subject", default="Re:", help="Reply subject (defaults to 'Re:').")
+@click.option("--message", required=True)
+@pass_context
+@handle_errors
+def reply(ctx: MoodleContext, post_id: int, subject: str, message: str) -> None:
+    """Reply to a post within an existing discussion thread."""
+    svc = ForumService(ctx.get_client())
+    new_id = svc.reply_to_post(post_id, subject, message)
+    console.print(f"[green]Posted reply {new_id} to post {post_id}[/green]")

@@ -80,3 +80,15 @@ class ForumService(BaseService):
             message=message,
         )
         return int(data["discussionid"])
+
+    def reply_to_post(self, post_id: int, subject: str, message: str) -> int:
+        """Reply to an existing post in a discussion (write — only reachable via the
+        full `moodle` CLI). ``post_id`` is the parent post being replied to, as listed
+        by ``forum posts <discussion_id>``. Returns the new post's id."""
+        data = self.call(
+            "mod_forum_add_discussion_post",
+            postid=post_id,
+            subject=subject,
+            message=message,
+        )
+        return int(data["postid"])

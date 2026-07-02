@@ -34,11 +34,17 @@ uv run mypy src/             # Type check
 
 ## Key Patterns
 
-- All CLI commands use `@pass_context` to get `MoodleContext` (profile, json_output, verbose)
+- All CLI commands use `@pass_context` to get `MoodleContext` (profile, json_output, verbose, trim_messages)
 - All CLI commands use `@handle_errors` for friendly error output
 - Services extend `BaseService` and access `self.client.call()`
 - Token is never stored in config TOML — only in OS keyring
 - `call` command is the escape hatch for any WS function
+- **Never hard-truncate text in output.** No `text[:N]` slices in CLI renderers. Long
+  fields render through `output.trim(text, ctx.trim_messages)`: full text by default,
+  cut only when the user passes the global `--trim-messages N`, and a cut value always
+  ends with `[… trimmed N chars]`. Silent truncation once made an agent read the first
+  80 chars of a forum post as the whole message — that class of bug stays dead.
+  (`--json` output is never trimmed.)
 
 ## Pre-auth flows (token-less calls)
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, render_json, render_table, trim
 from moodle_cli.services.cohort import CohortService
 
 
@@ -25,7 +25,12 @@ def list_cohorts(ctx: MoodleContext) -> None:
         render_json([c.model_dump() for c in cohorts])
     else:
         rows = [
-            {"ID": c.id, "Name": c.name, "ID Number": c.idnumber, "Description": c.description[:60]}
+            {
+                "ID": c.id,
+                "Name": c.name,
+                "ID Number": c.idnumber,
+                "Description": trim(c.description, ctx.trim_messages),
+            }
             for c in cohorts
         ]
         render_table(rows, title=f"Cohorts ({len(rows)})")

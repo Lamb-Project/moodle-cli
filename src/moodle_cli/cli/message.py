@@ -5,7 +5,7 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, render_json, render_table, trim
 from moodle_cli.services.message import MessageService
 from moodle_cli.services.user import UserService
 
@@ -54,7 +54,15 @@ def list_messages(ctx: MoodleContext, from_user: int) -> None:
     if ctx.json_output:
         render_json([m.model_dump() for m in msgs])
     else:
-        rows = [{"ID": m.id, "From": m.useridfrom, "Text": m.text[:80], "Time": m.timecreated} for m in msgs]
+        rows = [
+            {
+                "ID": m.id,
+                "From": m.useridfrom,
+                "Text": trim(m.text, ctx.trim_messages),
+                "Time": m.timecreated,
+            }
+            for m in msgs
+        ]
         render_table(rows, title=f"Messages ({len(rows)})")
 
 

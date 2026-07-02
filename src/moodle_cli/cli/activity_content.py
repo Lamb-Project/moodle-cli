@@ -8,7 +8,7 @@ import re
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, render_json, render_table, trim
 from moodle_cli.services.activity_content import (
     DatabaseService,
     GlossaryService,
@@ -18,8 +18,10 @@ from moodle_cli.services.activity_content import (
 )
 
 
-def _plain(html: str, limit: int = 80) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html or "")).strip()[:limit]
+def _plain(html: str) -> str:
+    """Strip HTML to plain text. No length cap — trimming (if any) is explicit,
+    via ``output.trim`` + the global ``--trim-messages`` option."""
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html or "")).strip()
 
 
 # ---- workshop -------------------------------------------------------------
@@ -86,7 +88,7 @@ def glossary_entries(ctx: MoodleContext, glossary_id: int) -> None:
             {
                 "ID": e.get("id"),
                 "Concept": e.get("concept", ""),
-                "Definition": _plain(e.get("definition", "")),
+                "Definition": trim(_plain(e.get("definition", "")), ctx.trim_messages),
             }
             for e in items
         ]
@@ -150,7 +152,7 @@ def wiki_page(ctx: MoodleContext, page_id: int) -> None:
         render_json(p)
     else:
         console.print(f"[bold]{p.get('title', '')}[/bold]")
-        console.print(_plain(p.get("cachedcontent", ""), 2000))
+        console.print(trim(_plain(p.get("cachedcontent", "")), ctx.trim_messages))
 
 
 # ---- lesson ---------------------------------------------------------------

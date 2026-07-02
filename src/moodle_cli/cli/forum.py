@@ -7,14 +7,15 @@ import re
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, fmt_ts, render_json, render_table
+from moodle_cli.output import console, fmt_ts, render_json, render_table, trim
 from moodle_cli.services.forum import ForumService
 
 
-def _plain(html: str, limit: int = 100) -> str:
+def _plain(html: str) -> str:
+    """Strip HTML to plain text. No length cap — trimming (if any) is explicit,
+    via ``output.trim`` + the global ``--trim-messages`` option."""
     text = re.sub(r"<[^>]+>", " ", html or "")
-    text = re.sub(r"\s+", " ", text).strip()
-    return text[:limit]
+    return re.sub(r"\s+", " ", text).strip()
 
 
 @click.group()
@@ -81,7 +82,7 @@ def posts(ctx: MoodleContext, discussion_id: int) -> None:
                 "When": fmt_ts(p.timecreated),
                 "Author": p.author_name,
                 "Subject": p.subject,
-                "Message": _plain(p.message, 80),
+                "Message": trim(_plain(p.message), ctx.trim_messages),
             }
             for p in items
         ]

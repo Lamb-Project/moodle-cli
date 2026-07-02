@@ -5,7 +5,7 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, render_json, render_table, trim
 from moodle_cli.services.course import CourseService
 
 
@@ -98,7 +98,7 @@ def get(ctx: MoodleContext, course_id: int) -> None:
         console.print(f"Format:   {c.format}")
         console.print(f"Visible:  {c.visible}")
         if c.summary:
-            console.print(f"Summary:  {c.summary[:200]}")
+            console.print(f"Summary:  {trim(c.summary, ctx.trim_messages)}")
 
 
 @course.command()

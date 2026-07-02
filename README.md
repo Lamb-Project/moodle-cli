@@ -171,7 +171,8 @@ issuers, the wiki edit-lock, draft-area allocators, `*_view_*` completion-trigge
 ## Global Options
 
 - `--profile / -p` — Profile name to use (default: "default")
-- `--json` — Output as JSON
+- `--json` — Output as JSON (always full text, never trimmed)
+- `--trim-messages N` — Trim long text fields (forum posts, messages, summaries, …) in table output to N chars. A trimmed value always ends with `[… trimmed N chars]` so a partial message can never pass for a whole one. **Default: full text — nothing is ever trimmed unless you ask.**
 - `--verbose / -v` — Verbose output
 - `--version` — Show version
 

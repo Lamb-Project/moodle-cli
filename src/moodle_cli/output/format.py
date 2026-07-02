@@ -37,3 +37,19 @@ def ago(epoch: int | None) -> str:
     if secs < 86400:
         return f"{secs // 3600}h"
     return f"{secs // 86400}d"
+
+
+def trim(text: str | None, limit: int | None) -> str:
+    """Trim text to ``limit`` chars, saying so explicitly when a cut happens.
+
+    ``limit=None`` (the default everywhere) returns the full text untouched.
+    When a cut does happen the value ends with ``[… trimmed N chars]`` so the
+    reader — human or agent — can never mistake a partial message for a whole
+    one. Silent truncation is the bug this helper exists to kill: an agent once
+    read the first 80 chars of a forum post as if it were the entire message
+    and missed the point of the thread.
+    """
+    text = text or ""
+    if limit is None or len(text) <= limit:
+        return text
+    return f"{text[:limit]} [… trimmed {len(text) - limit} chars]"

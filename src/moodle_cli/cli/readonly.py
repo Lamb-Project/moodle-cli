@@ -116,10 +116,25 @@ def _full_groups() -> dict[str, click.Group]:
 @click.option("--profile", "-p", default=None, help="Profile name to use.")
 @click.option("--json", "json_output", is_flag=True, help="Output as JSON.")
 @click.option("--verbose", "-v", is_flag=True, help="Show verbose output.")
+@click.option(
+    "--trim-messages",
+    "trim_messages",
+    type=click.IntRange(min=1),
+    default=None,
+    help=(
+        "Trim long text fields (forum posts, messages, summaries, …) in table "
+        "output to N chars; a trimmed value says how many chars were cut. "
+        "Default: full text, never trimmed."
+    ),
+)
 @click.version_option(version=__version__, prog_name="moodle-readonly")
 @click.pass_context
 def cli_readonly(
-    ctx: click.Context, profile: str | None, json_output: bool, verbose: bool
+    ctx: click.Context,
+    profile: str | None,
+    json_output: bool,
+    verbose: bool,
+    trim_messages: int | None,
 ) -> None:
     """moodle-readonly — read-only Moodle access (safe for agents / automation).
 
@@ -132,7 +147,11 @@ def cli_readonly(
     """
     ctx.ensure_object(dict)
     ctx.obj = MoodleContext(
-        profile=profile, json_output=json_output, verbose=verbose, readonly=True
+        profile=profile,
+        json_output=json_output,
+        verbose=verbose,
+        readonly=True,
+        trim_messages=trim_messages,
     )
 
 

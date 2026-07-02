@@ -5,7 +5,7 @@ from __future__ import annotations
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import console, render_json, render_table
+from moodle_cli.output import console, render_json, render_table, trim
 from moodle_cli.services.quiz import QuizService
 
 
@@ -66,7 +66,7 @@ def review(ctx: MoodleContext, attempt_id: int) -> None:
             mark = q.get("mark", "")
             slot = q.get("slot", "")
             html = _re.sub(r"<[^>]+>", " ", q.get("html", "") or "")
-            html = _re.sub(r"\s+", " ", html).strip()[:100]
+            html = trim(_re.sub(r"\s+", " ", html).strip(), ctx.trim_messages)
             console.print(f"  Q{slot} [{status}] mark={mark}: {html}")
 
 

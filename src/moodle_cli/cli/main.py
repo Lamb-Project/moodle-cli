@@ -25,11 +25,15 @@ class MoodleContext:
         json_output: bool = False,
         verbose: bool = False,
         readonly: bool = False,
+        trim_messages: int | None = None,
     ) -> None:
         self.profile_name = profile
         self.json_output = json_output
         self.verbose = verbose
         self.readonly = readonly
+        # None = serve the full text (the default). Set via --trim-messages N;
+        # commands render long text fields through output.trim(text, this).
+        self.trim_messages = trim_messages
         self._config_mgr = ConfigManager()
         self._token_store = TokenStore()
         self._client: MoodleHTTPClient | None = None
@@ -90,9 +94,26 @@ def handle_errors(fn: Any) -> Any:
 @click.option("--profile", "-p", default=None, help="Profile name to use.")
 @click.option("--json", "json_output", is_flag=True, help="Output as JSON.")
 @click.option("--verbose", "-v", is_flag=True, help="Show verbose output.")
+@click.option(
+    "--trim-messages",
+    "trim_messages",
+    type=click.IntRange(min=1),
+    default=None,
+    help=(
+        "Trim long text fields (forum posts, messages, summaries, …) in table "
+        "output to N chars; a trimmed value says how many chars were cut. "
+        "Default: full text, never trimmed."
+    ),
+)
 @click.version_option(version=__version__, prog_name="moodle-cli")
 @click.pass_context
-def cli(ctx: click.Context, profile: str | None, json_output: bool, verbose: bool) -> None:
+def cli(
+    ctx: click.Context,
+    profile: str | None,
+    json_output: bool,
+    verbose: bool,
+    trim_messages: int | None,
+) -> None:
     """moodle-cli — interact with Moodle from the terminal.
 
     Copyright (C) 2026 Marc Alier, Juanan Pereira — LAMB Project
@@ -101,7 +122,12 @@ def cli(ctx: click.Context, profile: str | None, json_output: bool, verbose: boo
     See https://github.com/Lamb-Project/moodle-cli for source code.
     """
     ctx.ensure_object(dict)
-    ctx.obj = MoodleContext(profile=profile, json_output=json_output, verbose=verbose)
+    ctx.obj = MoodleContext(
+        profile=profile,
+        json_output=json_output,
+        verbose=verbose,
+        trim_messages=trim_messages,
+    )
 
 
 # Import and register command groups (deferred to avoid circular imports)

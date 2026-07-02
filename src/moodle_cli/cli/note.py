@@ -7,7 +7,7 @@ import re
 import click
 
 from moodle_cli.cli.main import MoodleContext, handle_errors, pass_context
-from moodle_cli.output import render_json, render_table
+from moodle_cli.output import render_json, render_table, trim
 from moodle_cli.services.note import NoteService
 
 
@@ -31,7 +31,10 @@ def course(ctx: MoodleContext, course_id: int) -> None:
             {
                 "ID": n.get("id"),
                 "User": n.get("userid"),
-                "Note": re.sub(r"<[^>]+>", " ", n.get("content", ""))[:80],
+                "Note": trim(
+                    re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", n.get("content", ""))).strip(),
+                    ctx.trim_messages,
+                ),
             }
             for n in notes
         ]

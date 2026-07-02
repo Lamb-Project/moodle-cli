@@ -36,7 +36,21 @@ moodle-readonly -p default forum posts 647185
 └────────┴──────────────────┴─────────────────┴─────────────┴─────────────────┘
 ```
 
-Posts come oldest-first. For the full untruncated text, use `--json`:
+Posts come oldest-first, and the table shows the **full message text** — nothing
+is cut unless you ask for it. For a compact skim, opt in with the global
+`--trim-messages N` flag; a trimmed cell always says how many chars were cut,
+so a partial message can never pass for a whole one:
+
+```bash
+moodle-readonly -p default --trim-messages 80 forum posts 647185
+#   Message: "Hola, IDIOMES i RAG. Volia preguntar si el processador … [… trimmed 412 chars]"
+```
+
+> History: table cells used to hard-truncate at 80 chars *silently* — an agent
+> reading a post through this command once mistook the first sentence for the
+> whole message. That's why the marker is not optional.
+
+For machine consumption, `--json` (always full text, never trimmed):
 
 ```bash
 moodle-readonly -p default --json forum posts 647185 | jq -r '.[] | "\(.author.fullname): \(.message)"'

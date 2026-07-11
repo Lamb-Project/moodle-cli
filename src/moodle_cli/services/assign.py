@@ -82,5 +82,6 @@ class AssignService(BaseService):
             attemptnumber=-1,
             addattempt=0,
             workflowstate="graded",
+            applytoall=0,
             plugindata={"assignfeedbackcomments_editor": {"text": feedback, "format": 1}},
         )

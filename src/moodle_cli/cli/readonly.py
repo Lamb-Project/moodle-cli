@@ -37,6 +37,7 @@ import click
 
 from moodle_cli import __version__
 from moodle_cli.cli.main import MoodleContext
+from moodle_cli.cli.terms import terms
 
 # Which (group -> subcommands) are exposed. Every entry is read-only-verified against the
 # service layer. `call` and `role` are absent by design (escape hatch / write-only).
@@ -115,6 +116,7 @@ def _full_groups() -> dict[str, click.Group]:
 @click.group()
 @click.option("--profile", "-p", default=None, help="Profile name to use.")
 @click.option("--json", "json_output", is_flag=True, help="Output as JSON.")
+@click.option("--annotated", is_flag=True, help="Output JSON data with predefined field meaning and limitation notes.")
 @click.option("--verbose", "-v", is_flag=True, help="Show verbose output.")
 @click.option(
     "--trim-messages",
@@ -135,6 +137,7 @@ def cli_readonly(
     json_output: bool,
     verbose: bool,
     trim_messages: int | None,
+    annotated: bool,
 ) -> None:
     """moodle-readonly — read-only Moodle access (safe for agents / automation).
 
@@ -152,6 +155,7 @@ def cli_readonly(
         verbose=verbose,
         readonly=True,
         trim_messages=trim_messages,
+        annotated=annotated,
     )
 
 
@@ -179,3 +183,6 @@ def _register_readonly_commands() -> None:
 
 
 _register_readonly_commands()
+
+# Local documentation is not a Moodle service and must not enter READONLY_COMMANDS.
+cli_readonly.add_command(terms)

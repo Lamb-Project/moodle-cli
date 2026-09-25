@@ -114,6 +114,7 @@ If you'd rather not install anything, decode the QR yourself (any QR reader) and
 | `note`      | course                                        |
 | `workshop`  | submissions, grades                           |
 | `glossary`  | entries                                       |
+| `terms`     | offline evidence glossary (`terms [TERM]`, `terms --command assign.submissions`); see [docs/glossary.md](docs/glossary.md) |
 | `database`  | entries                                       |
 | `wiki`      | pages, page                                   |
 | `lesson`    | pages                                         |
@@ -173,6 +174,7 @@ issuers, the wiki edit-lock, draft-area allocators, `*_view_*` completion-trigge
 - `--profile / -p` — Profile name to use (default: "default")
 - `--json` — Output as JSON (always full text, never trimmed)
 - `--trim-messages N` — Trim long text fields (forum posts, messages, summaries, …) in table output to N chars. A trimmed value always ends with `[… trimmed N chars]` so a partial message can never pass for a whole one. **Default: full text — nothing is ever trimmed unless you ask.**
+- `--annotated` — JSON wrapped as `{data, field_notes}`: `data` is exactly what `--json` prints, `field_notes` the evidence glossary terms for that command (what a field means and what it does not prove). Plain-text write confirmations are not converted.
 - `--verbose / -v` — Verbose output
 - `--version` — Show version
 

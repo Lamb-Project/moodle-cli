@@ -26,9 +26,11 @@ class MoodleContext:
         verbose: bool = False,
         readonly: bool = False,
         trim_messages: int | None = None,
+        annotated: bool = False,
     ) -> None:
         self.profile_name = profile
-        self.json_output = json_output
+        self.json_output = json_output or annotated
+        self.annotated = annotated
         self.verbose = verbose
         self.readonly = readonly
         # None = serve the full text (the default). Set via --trim-messages N;
@@ -93,6 +95,7 @@ def handle_errors(fn: Any) -> Any:
 @click.group()
 @click.option("--profile", "-p", default=None, help="Profile name to use.")
 @click.option("--json", "json_output", is_flag=True, help="Output as JSON.")
+@click.option("--annotated", is_flag=True, help="Output JSON data with predefined field meaning and limitation notes.")
 @click.option("--verbose", "-v", is_flag=True, help="Show verbose output.")
 @click.option(
     "--trim-messages",
@@ -113,6 +116,7 @@ def cli(
     json_output: bool,
     verbose: bool,
     trim_messages: int | None,
+    annotated: bool,
 ) -> None:
     """moodle-cli — interact with Moodle from the terminal.
 
@@ -127,6 +131,7 @@ def cli(
         json_output=json_output,
         verbose=verbose,
         trim_messages=trim_messages,
+        annotated=annotated,
     )
 
 
@@ -189,6 +194,10 @@ def _register_commands() -> None:
     cli.add_command(database)
     cli.add_command(wiki)
     cli.add_command(lesson)
+    from moodle_cli.cli.terms import install_glossary_help, terms
+
+    install_glossary_help(cli)
+    cli.add_command(terms)
 
 
 _register_commands()
